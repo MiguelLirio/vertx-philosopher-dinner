@@ -1,15 +1,58 @@
 package vertx.consumer;
 
-import io.vertx.core.AbstractVerticle;
+import vertx.components.Status;
 
-public class Philosopher extends AbstractVerticle {
-    @Override
-    public void start() throws Exception {
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
+public class Philosopher {
+
+    private Date lastMeal;
+    private Status status;
+    private final String name;
+    private int forks;
+
+    public Philosopher(String nameValue) {
+        this.name = nameValue;
+        this.status = Status.THINKING;
+        this.lastMeal = new Date();
+        this.forks = 0;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status statusValue) {
+        this.status = statusValue;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void takeFork() {
+        if (this.forks >= 2) {
+            throw new IllegalStateException();
+        }
+        this.forks++;
+    }
+
+    public void releaseForks() {
+        this.forks = 0;
+    }
+
+    public boolean isAlive() {
+        return this.getStatus() != Status.DEAD;
+    }
+
+    private long getSecondSinceLastMeal() {
+        long duration  = new Date().getTime() - this.lastMeal.getTime();
+        return TimeUnit.MILLISECONDS.toSeconds(duration);
     }
 
     @Override
-    public void stop()throws Exception {
-
+    public String toString() {
+        return name + ", " + status;
     }
 }
